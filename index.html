@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸 Eco-Beauty Vocab Garden - Unit 2 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink-main: #ffb6c1;
+            --pink-soft: #fff0f3;
+            --pink-accent: #ff85a1;
+            --mint-main: #b8e0d2;
+            --mint-dark: #70c1b3;
+            --purple-soft: #e8dff5;
+            --text-color: #5c4d51;
+            --card-shadow: 0 10px 25px rgba(255, 182, 193, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fff0f3 0%, #e8dff5 50%, #e8f5e9 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--pink-accent);
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 0px #fff;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            color: #886070;
+            font-weight: 600;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background-color: white;
+            border: 2px solid var(--pink-main);
+            padding: 9px 18px;
+            border-radius: 25px;
+            color: var(--pink-accent);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background-color: var(--pink-accent);
+            color: white;
+            border-color: var(--pink-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 133, 161, 0.4);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            border: 2px solid #ffffff;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- FLASHCARD --- */
+        .flashcard-container {
+            perspective: 1000px;
+            width: 100%;
+            height: 270px;
+            margin: 15px 0;
+            cursor: pointer;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 20px;
+        }
+
+        .flashcard.flipped { transform: rotateY(180deg); }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border: 3px solid var(--mint-main);
+            background: white;
+            text-align: center;
+        }
+
+        .card-front { background: linear-gradient(145deg, #ffffff, #fff0f3); }
+        .card-back { background: linear-gradient(145deg, #e8f5e9, #ffffff); transform: rotateY(180deg); }
+
+        .word-title { font-size: 2.2rem; font-weight: 800; color: var(--pink-accent); }
+        .word-pron { font-size: 1.1rem; color: #777; margin-bottom: 6px; }
+        .word-type { background: var(--mint-main); color: #2e6f40; padding: 3px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; }
+        .word-meaning { font-size: 1.8rem; font-weight: 700; color: #2e6f40; }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+
+        .btn-action {
+            background: var(--mint-dark);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-action:hover { background: #5ba396; transform: scale(1.03); }
+
+        .audio-btn {
+            background: #fff0f3;
+            border: 2px solid var(--pink-accent);
+            color: var(--pink-accent);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- GAME LẬT HÌNH MEMORY --- */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .memory-card {
+            height: 90px;
+            background: var(--pink-soft);
+            border: 2px solid var(--pink-main);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            user-select: none;
+            text-align: center;
+            padding: 8px;
+            transition: transform 0.3s;
+        }
+
+        .memory-card.hidden-content {
+            background: linear-gradient(135deg, var(--pink-main), var(--pink-accent));
+            color: transparent;
+            font-size: 2rem;
+        }
+
+        .memory-card.hidden-content::after {
+            content: "🌸";
+            color: white;
+        }
+
+        .memory-card.matched {
+            background: #e8f5e9;
+            border-color: var(--mint-dark);
+            color: #2e6f40;
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        /* --- GAME KIỂU IOE --- */
+        .ioe-box {
+            background: white;
+            border: 2px solid var(--pink-main);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .ioe-question {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #4a3f43;
+            margin-bottom: 15px;
+        }
+
+        .ioe-input {
+            width: 80%;
+            padding: 12px;
+            border: 2px solid var(--mint-dark);
+            border-radius: 15px;
+            font-size: 1.1rem;
+            text-align: center;
+            font-weight: 700;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        .scramble-letters {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .letter-btn {
+            background: var(--pink-soft);
+            border: 2px solid var(--pink-accent);
+            color: var(--pink-accent);
+            font-weight: 800;
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* --- DICTIONARY --- */
+        .dict-search {
+            width: 100%;
+            padding: 12px 18px;
+            border: 2px solid var(--pink-main);
+            border-radius: 20px;
+            outline: none;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .dict-list {
+            max-height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dict-item {
+            background: white;
+            padding: 10px 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--pink-accent);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .dict-en { font-weight: 800; color: var(--pink-accent); }
+        .dict-phonetic { font-size: 0.85rem; color: #888; font-weight: 400; }
+        .dict-vi { font-weight: 700; color: #2e6f40; }
+
+        .score-board {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--pink-accent);
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .memory-grid { grid-template-columns: repeat(2, 1fr); }
+            .word-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🌸 Eco-Beauty Vocab Garden 🌸</h1>
+        <p>Học từ vựng Unit 2 - Eco-Friendly Lifestyle cùng trò chơi xinh xắn!</p>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('flashcard-screen')">🎴 Flashcard</button>
+        <button class="tab-btn" onclick="switchTab('memory-screen')">🌸 Lật Hình (Game)</button>
+        <button class="tab-btn" onclick="switchTab('ioe-screen')">🎯 Thi Kiểu IOE</button>
+        <button class="tab-btn" onclick="switchTab('dict-screen')">📖 Danh Sách Từ (63 Từ)</button>
+    </div>
+
+    <div class="container">
+        <!-- FLASHCARD SCREEN -->
+        <div id="flashcard-screen" class="screen active">
+            <div style="text-align: center; color: #888; font-size: 0.9rem;" id="card-progress">1 / 63</div>
+            <div class="flashcard-container" onclick="flipCard()">
+                <div class="flashcard" id="flashcard">
+                    <div class="card-front">
+                        <span class="word-type" id="fc-type">noun</span>
+                        <div class="word-title" id="fc-en">advice</div>
+                        <div class="word-pron" id="fc-pron">/əd'vaɪs/</div>
+                        <button class="audio-btn" onclick="speakCurrentWord(event)">🔊</button>
+                        <p style="font-size: 0.75rem; color: #bbb; margin-top: 15px;">(Chạm để xem nghĩa)</p>
+                    </div>
+                    <div class="card-back">
+                        <div class="word-meaning" id="fc-vi">lời khuyên</div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="btn-action" onclick="prevCard()">◄ Từ trước</button>
+                <button class="btn-action" onclick="randomCard()">🎲 Ngẫu nhiên</button>
+                <button class="btn-action" onclick="nextCard()">Từ sau ►</button>
+            </div>
+        </div>
+
+        <!-- GAME LẬT HÌNH MEMORY -->
+        <div id="memory-screen" class="screen">
+            <div class="score-board" id="memory-score">Lật các mảnh ghép để tìm cặp từ tương ứng!</div>
+            <div class="memory-grid" id="memory-grid"></div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn-action" onclick="initMemoryGame()">🔄 Ván mới</button>
+            </div>
+        </div>
+
+        <!-- GAME KIỂU IOE -->
+        <div id="ioe-screen" class="screen">
+            <div class="score-board" id="ioe-score">Điểm IOE: 0</div>
+            <div class="ioe-box">
+                <div style="color: var(--mint-dark); font-weight: 700; margin-bottom: 5px;" id="ioe-type-label">Dạng bài: Xếp chữ</div>
+                <div class="ioe-question" id="ioe-question">...</div>
+                
+                <div id="ioe-interactive-area"></div>
+
+                <div style="margin-top: 15px;">
+                    <button class="btn-action" onclick="checkIOEAnswer()">Nộp bài ✨</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DICTIONARY SCREEN -->
+        <div id="dict-screen" class="screen">
+            <input type="text" class="dict-search" id="dict-search" placeholder="🔍 Tìm kiếm từ vựng..." oninput="filterDict()">
+            <div class="dict-list" id="dict-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // Danh sách ĐẦY ĐỦ 100% từ vựng Unit 2
+        const vocabulary = [
+            { en: "advice", type: "n", pron: "/əd'vaɪs/", vi: "lời khuyên" },
+            { en: "environmental", type: "adj", pron: "/ɪn,vaɪrən'mentl/", vi: "thuộc về môi trường" },
+            { en: "aim", type: "n", pron: "/eɪm/", vi: "mục tiêu" },
+            { en: "achieve", type: "v", pron: "/ə'tʃiːv/", vi: "đạt được" },
+            { en: "action", type: "n", pron: "/'ækʃn/", vi: "hành động" },
+            { en: "activity", type: "n", pron: "/æk'tɪvəti/", vi: "hoạt động" },
+            { en: "adopt", type: "v", pron: "/ə'dɒpt/", vi: "theo, chọn theo" },
+            { en: "appliance", type: "n", pron: "/ə'plaɪəns/", vi: "thiết bị, dụng cụ" },
+            { en: "atmosphere", type: "n", pron: "/'ætməsfɪə(r)/", vi: "bầu không khí" },
+            { en: "attend", type: "v", pron: "/ə'tend/", vi: "tham dự" },
+            { en: "area", type: "n", pron: "/'eəriə/", vi: "khu vực" },
+            { en: "awareness", type: "n", pron: "/ə'weənəs/", vi: "nhận thức" },
+            { en: "base on", type: "v", pron: "/beɪs ɒn/", vi: "dựa trên" },
+            { en: "be able to", type: "v", pron: "/bi 'eɪbl tu/", vi: "có thể" },
+            { en: "be proud of", type: "v", pron: "/bi praʊd əv/", vi: "tự hào về" },
+            { en: "be responsible for", type: "v", pron: "/bi rɪ'spɒnsəbl fə(r)/", vi: "chịu trách nhiệm" },
+            { en: "bottle", type: "n", pron: "/'bɒtl/", vi: "chai, lọ" },
+            { en: "bin", type: "n", pron: "/bɪn/", vi: "cái thùng" },
+            { en: "break down", type: "v", pron: "/breɪk daʊn/", vi: "chia nhỏ" },
+            { en: "calculate", type: "v", pron: "/'kælkjuleɪt/", vi: "tính toán" },
+            { en: "carbon footprint", type: "n", pron: "/,kɑːbən 'fʊtprɪnt/", vi: "dấu chân cacbon" },
+            { en: "ceremony", type: "n", pron: "/'serəməni/", vi: "lễ kỷ niệm" },
+            { en: "change", type: "n/v", pron: "/tʃeɪndʒ/", vi: "sự thay đổi / thay đổi" },
+            { en: "chemical", type: "n", pron: "/'kemɪkl/", vi: "hóa chất" },
+            { en: "clean up", type: "v", pron: "/kliːn ʌp/", vi: "dọn dẹp" },
+            { en: "club", type: "n", pron: "/klʌb/", vi: "câu lạc bộ" },
+            { en: "collect", type: "v", pron: "/kə'lekt/", vi: "sưu tầm, thu gom" },
+            { en: "create", type: "v", pron: "/kri'eɪt/", vi: "tạo ra" },
+            { en: "cut down on", type: "v", pron: "/kʌt daʊn ɒn/", vi: "cắt giảm" },
+            { en: "damage", type: "n/v", pron: "/'dæmɪdʒ/", vi: "tổn hại, thiệt hại" },
+            { en: "dangerous", type: "adj", pron: "/'deɪndʒərəs/", vi: "nguy hiểm" },
+            { en: "device", type: "n", pron: "/dɪ'vaɪs/", vi: "thiết bị" },
+            { en: "difference", type: "n", pron: "/'dɪfrəns/", vi: "sự khác biệt" },
+            { en: "dirty", type: "adj", pron: "/'dɜːti/", vi: "dơ bẩn" },
+            { en: "eco-friendly", type: "adj", pron: "/,iːkəʊ 'frendli/", vi: "thân thiện môi trường" },
+            { en: "electrical", type: "adj", pron: "/ɪ'lektrɪkl/", vi: "thuộc về điện" },
+            { en: "electricity", type: "n", pron: "/ɪ,lek'trɪsəti/", vi: "điện" },
+            { en: "emission", type: "n", pron: "/ɪ'mɪʃn/", vi: "sự thải ra" },
+            { en: "encourage", type: "v", pron: "/ɪn'kʌrɪdʒ/", vi: "khuyến khích" },
+            { en: "energy", type: "n", pron: "/'enədʒi/", vi: "năng lượng" },
+            { en: "environment", type: "n", pron: "/ɪn'vaɪrənmənt/", vi: "môi trường" },
+            { en: "estimate", type: "v", pron: "/'estɪmeɪt/", vi: "ước tính" },
+            { en: "exhibition", type: "n", pron: "/,eksɪ'bɪʃn/", vi: "buổi triển lãm" },
+            { en: "explosion", type: "n", pron: "/ɪk'spləʊʒn/", vi: "vụ nổ" },
+            { en: "garbage can", type: "n", pron: "/'ɡɑːbɪdʒ kæn/", vi: "thùng rác" },
+            { en: "global", type: "adj", pron: "/'ɡləʊbl/", vi: "toàn cầu" },
+            { en: "habit", type: "n", pron: "/'hæbɪt/", vi: "thói quen" },
+            { en: "harm", type: "v", pron: "/hɑːm/", vi: "gây hại" },
+            { en: "harmful", type: "adj", pron: "/'hɑːmfl/", vi: "độc hại" },
+            { en: "improve", type: "v", pron: "/ɪm'pruːv/", vi: "cải thiện" },
+            { en: "issue", type: "n", pron: "/'ɪʃuː/", vi: "vấn đề" },
+            { en: "item", type: "n", pron: "/'aɪtəm/", vi: "vật dụng" },
+            { en: "join", type: "v", pron: "/dʒɔɪn/", vi: "tham gia" },
+            { en: "lead", type: "v", pron: "/liːd/", vi: "dẫn đến" },
+            { en: "lifestyle", type: "n", pron: "/'laɪfstaɪl/", vi: "lối sống, cách sống" },
+            { en: "litter", type: "v", pron: "/'lɪtə(r)/", vi: "xả rác" },
+            { en: "material", type: "n", pron: "/mə'tɪəriəl/", vi: "nguyên liệu" },
+            { en: "method", type: "n", pron: "/'meθəd/", vi: "phương pháp" },
+            { en: "natural", type: "adj", pron: "/'nætʃrəl/", vi: "tự nhiên" },
+            { en: "natural resources", type: "n", pron: "/'nætʃrəl rɪ'sɔːsɪz/", vi: "nguồn tài nguyên thiên nhiên" },
+            { en: "neighborhood", type: "n", pron: "/'neɪbəhʊd/", vi: "khu xóm" },
+            { en: "organic", type: "adj", pron: "/ɔː'ɡænɪk/", vi: "hữu cơ" },
+            { en: "organize", type: "v", pron: "/'ɔːɡənaɪz/", vi: "tổ chức" },
+            { en: "personal", type: "adj", pron: "/'pɜːsənl/", vi: "cá nhân" },
+            { en: "pick up", type: "v", pron: "/pɪk ʌp/", vi: "nhặt" },
+            { en: "polluted", type: "adj", pron: "/pə'luːtɪd/", vi: "bị ô nhiễm" },
+            { en: "pollution", type: "n", pron: "/pə'luːʃn/", vi: "sự ô nhiễm" },
+            { en: "produce", type: "v", pron: "/prə'djuːs/", vi: "sản xuất ra" },
+            { en: "product", type: "n", pron: "/'prɒdʌkt/", vi: "sản phẩm" },
+            { en: "protect", type: "v", pron: "/prə'tekt/", vi: "bảo vệ" },
+            { en: "provide", type: "v", pron: "/prə'vaɪd/", vi: "cung cấp" },
+            { en: "public transport", type: "n", pron: "/,pʌblɪk 'trænspɔːt/", vi: "phương tiện công cộng" },
+            { en: "raise", type: "v", pron: "/reɪz/", vi: "làm gia tăng" },
+            { en: "raw", type: "adj", pron: "/rɔː/", vi: "thô, chưa qua chế biến" },
+            { en: "recycle", type: "v", pron: "/,riː'saɪkl/", vi: "tái chế" },
+            { en: "reduce", type: "v", pron: "/rɪ'djuːs/", vi: "làm giảm" },
+            { en: "refillable", type: "adj", pron: "/,riː'fɪləbl/", vi: "có thể làm đầy lại" },
+            { en: "reusable", type: "adj", pron: "/,riː'juːzəbl/", vi: "có thể tái sử dụng" },
+            { en: "set up", type: "v", pron: "/set ʌp/", vi: "thành lập" },
+            { en: "shade", type: "n", pron: "/ʃeɪd/", vi: "bóng râm" },
+            { en: "situation", type: "n", pron: "/,sɪtʃu'eɪʃn/", vi: "tình huống" },
+            { en: "suggestion", type: "n", pron: "/sə'dʒestʃən/", vi: "lời đề nghị" },
+            { en: "sustainable", type: "adj", pron: "/sə'steɪnəbl/", vi: "bền vững" },
+            { en: "trash", type: "n", pron: "/træʃ/", vi: "rác thải" },
+            { en: "turn off", type: "v", pron: "/tɜːn ɒf/", vi: "tắt" },
+            { en: "take part in", type: "v", pron: "/teɪk pɑːt ɪn/", vi: "tham gia" },
+            { en: "temperature", type: "n", pron: "/'temprətʃə(r)/", vi: "nhiệt độ" },
+            { en: "waste", type: "v/n", pron: "/weɪst/", vi: "lãng phí / rác thải" }
+        ];
+
+        let currentIndex = 0;
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.screen').forEach(scr => scr.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+
+            if (tabId === 'memory-screen') initMemoryGame();
+            if (tabId === 'ioe-screen') generateIOEQuestion();
+            if (tabId === 'dict-screen') renderDict(vocabulary);
+        }
+
+        // --- FLASHCARD ---
+        function updateCard() {
+            const item = vocabulary[currentIndex];
+            document.getElementById('fc-en').innerText = item.en;
+            document.getElementById('fc-pron').innerText = item.pron;
+            document.getElementById('fc-type').innerText = item.type;
+            document.getElementById('fc-vi').innerText = item.vi;
+            document.getElementById('card-progress').innerText = `${currentIndex + 1} / ${vocabulary.length}`;
+            document.getElementById('flashcard').classList.remove('flipped');
+        }
+
+        function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+        function nextCard() { currentIndex = (currentIndex + 1) % vocabulary.length; updateCard(); }
+        function prevCard() { currentIndex = (currentIndex - 1 + vocabulary.length) % vocabulary.length; updateCard(); }
+        function randomCard() { currentIndex = Math.floor(Math.random() * vocabulary.length); updateCard(); }
+
+        function speakCurrentWord(e) {
+            e.stopPropagation();
+            const msg = new SpeechSynthesisUtterance(vocabulary[currentIndex].en);
+            msg.lang = 'en-US';
+            window.speechSynthesis.speak(msg);
+        }
+
+        // --- GAME LẬT HÌNH MEMORY ---
+        let memoryFlipped = [];
+        let memoryMatchedCount = 0;
+
+        function initMemoryGame() {
+            const grid = document.getElementById('memory-grid');
+            grid.innerHTML = '';
+            memoryFlipped = [];
+            memoryMatchedCount = 0;
+
+            const selected = [...vocabulary].sort(() => 0.5 - Math.random()).slice(0, 6);
+            let items = [];
+            selected.forEach((item, idx) => {
+                items.push({ id: idx, text: item.en });
+                items.push({ id: idx, text: item.vi });
+            });
+            items.sort(() => 0.5 - Math.random());
+
+            items.forEach(data => {
+                const card = document.createElement('div');
+                card.className = 'memory-card hidden-content';
+                card.dataset.id = data.id;
+                card.dataset.text = data.text;
+                card.onclick = () => flipMemoryCard(card);
+                grid.appendChild(card);
+            });
+        }
+
+        function flipMemoryCard(card) {
+            if (memoryFlipped.length >= 2 || !card.classList.contains('hidden-content') || card.classList.contains('matched')) return;
+
+            card.classList.remove('hidden-content');
+            card.innerText = card.dataset.text;
+            memoryFlipped.push(card);
+
+            if (memoryFlipped.length === 2) {
+                const [c1, c2] = memoryFlipped;
+                if (c1.dataset.id === c2.dataset.id) {
+                    c1.classList.add('matched');
+                    c2.classList.add('matched');
+                    memoryFlipped = [];
+                    memoryMatchedCount += 2;
+                    if (memoryMatchedCount === 12) {
+                        setTimeout(() => alert('🌸 Tuyệt vời! Bạn đã hoàn thành ván lật hình!'), 300);
+                    }
+                } else {
+                    setTimeout(() => {
+                        c1.classList.add('hidden-content');
+                        c2.classList.add('hidden-content');
+                        c1.innerText = '';
+                        c2.innerText = '';
+                        memoryFlipped = [];
+                    }, 800);
+                }
+            }
+        }
+
+        // --- GAME KIỂU IOE ---
+        let ioeScore = 0;
+        let currentIOEItem = null;
+        let ioeMode = 0; // 0: scramble, 1: fill blank
+
+        function generateIOEQuestion() {
+            currentIOEItem = vocabulary[Math.floor(Math.random() * vocabulary.length)];
+            ioeMode = Math.floor(Math.random() * 2);
+            const area = document.getElementById('ioe-interactive-area');
+            area.innerHTML = '';
+
+            if (ioeMode === 0) {
+                // Dạng 1: Xếp từ bị xáo trộn
+                document.getElementById('ioe-type-label').innerText = "Dạng bài IOE: Sắp xếp chữ cái thành từ đúng";
+                document.getElementById('ioe-question').innerText = `Nghĩa: "${currentIOEItem.vi}"`;
+
+                let letters = currentIOEItem.en.split('').sort(() => 0.5 - Math.random());
+                const container = document.createElement('div');
+                container.className = 'scramble-letters';
+                
+                letters.forEach(l => {
+                    const btn = document.createElement('div');
+                    btn.className = 'letter-btn';
+                    btn.innerText = l;
+                    btn.onclick = () => {
+                        input.value += l;
+                    };
+                    container.appendChild(btn);
+                });
+
+                const input = document.createElement('input');
+                input.className = 'ioe-input';
+                input.id = 'ioe-answer';
+                input.placeholder = 'Nhập từ hoàn chỉnh...';
+
+                area.appendChild(container);
+                area.appendChild(input);
+
+            } else {
+                // Dạng 2: Điền ký tự còn thiếu
+                document.getElementById('ioe-type-label').innerText = "Dạng bài IOE: Điền từ còn thiếu vào chỗ trống";
+                
+                let word = currentIOEItem.en;
+                let masked = word.split('').map((char, i) => (i % 2 === 1 && char !== ' ') ? '_' : char).join(' ');
+                
+                document.getElementById('ioe-question').innerText = `${masked} (${currentIOEItem.vi})`;
+
+                const input = document.createElement('input');
+                input.className = 'ioe-input';
+                input.id = 'ioe-answer';
+                input.placeholder = 'Gõ từ tiếng Anh chính xác...';
+
+                area.appendChild(input);
+            }
+        }
+
+        function checkIOEAnswer() {
+            const ans = document.getElementById('ioe-answer').value.trim().toLowerCase();
+            if (ans === currentIOEItem.en.toLowerCase()) {
+                alert('🎉 Chính xác! +10 điểm IOE');
+                ioeScore += 10;
+            } else {
+                alert(`❌ Chưa đúng rồi! Đáp án chuẩn là: "${currentIOEItem.en}"`);
+            }
+            document.getElementById('ioe-score').innerText = `Điểm IOE: ${ioeScore}`;
+            generateIOEQuestion();
+        }
+
+        // --- DICTIONARY ---
+        function renderDict(items) {
+            const list = document.getElementById('dict-list');
+            list.innerHTML = '';
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'dict-item';
+                div.innerHTML = `
+                    <div>
+                        <span class="dict-en">${item.en}</span>
+                        <span class="dict-phonetic">${item.pron}</span>
+                    </div>
+                    <div class="dict-vi">(${item.type}) ${item.vi}</div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function filterDict() {
+            const query = document.getElementById('dict-search').value.toLowerCase();
+            const filtered = vocabulary.filter(item => 
+                item.en.toLowerCase().includes(query) || 
+                item.vi.toLowerCase().includes(query)
+            );
+            renderDict(filtered);
+        }
+
+        // Khởi chạy ban đầu
+        updateCard();
+    </script>
+</body>
+</html>
