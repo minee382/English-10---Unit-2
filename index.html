@@ -276,6 +276,40 @@
             cursor: pointer;
         }
 
+        /* --- QUIZ SCREEN --- */
+        .quiz-question {
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4a3f43;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid var(--pink-main);
+            padding: 15px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            background: var(--pink-soft);
+            border-color: var(--pink-accent);
+            transform: translateY(-2px);
+        }
+
         /* --- DICTIONARY --- */
         .dict-search {
             width: 100%;
@@ -320,6 +354,7 @@
 
         @media (max-width: 600px) {
             .memory-grid { grid-template-columns: repeat(2, 1fr); }
+            .quiz-options { grid-template-columns: 1fr; }
             .word-title { font-size: 1.8rem; }
         }
     </style>
@@ -333,9 +368,10 @@
 
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('flashcard-screen')">🎴 Flashcard</button>
-        <button class="tab-btn" onclick="switchTab('memory-screen')">🌸 Lật Hình (Game)</button>
-        <button class="tab-btn" onclick="switchTab('ioe-screen')">🎯 Thi Kiểu IOE</button>
-        <button class="tab-btn" onclick="switchTab('dict-screen')">📖 Danh Sách Từ (63 Từ)</button>
+        <button class="tab-btn" onclick="switchTab('memory-screen')">🌸 Lật Hình</button>
+        <button class="tab-btn" onclick="switchTab('ioe-screen')">🎯 Thi IOE</button>
+        <button class="tab-btn" onclick="switchTab('quiz-screen')">✨ Trắc Nghiệm</button>
+        <button class="tab-btn" onclick="switchTab('dict-screen')">📖 Danh Sách (63 Từ)</button>
     </div>
 
     <div class="container">
@@ -387,6 +423,13 @@
             </div>
         </div>
 
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="screen">
+            <div class="score-board" id="quiz-score">Điểm Quiz: 0</div>
+            <div class="quiz-question" id="quiz-question">...</div>
+            <div class="quiz-options" id="quiz-options"></div>
+        </div>
+
         <!-- DICTIONARY SCREEN -->
         <div id="dict-screen" class="screen">
             <input type="text" class="dict-search" id="dict-search" placeholder="🔍 Tìm kiếm từ vựng..." oninput="filterDict()">
@@ -395,7 +438,7 @@
     </div>
 
     <script>
-        // Danh sách ĐẦY ĐỦ 100% từ vựng Unit 2
+        // Danh sách ĐẦY ĐỦ 100% từ vựng Unit 2 (63 từ)
         const vocabulary = [
             { en: "advice", type: "n", pron: "/əd'vaɪs/", vi: "lời khuyên" },
             { en: "environmental", type: "adj", pron: "/ɪn,vaɪrən'mentl/", vi: "thuộc về môi trường" },
@@ -498,6 +541,7 @@
 
             if (tabId === 'memory-screen') initMemoryGame();
             if (tabId === 'ioe-screen') generateIOEQuestion();
+            if (tabId === 'quiz-screen') initQuiz();
             if (tabId === 'dict-screen') renderDict(vocabulary);
         }
 
@@ -584,7 +628,7 @@
         // --- GAME KIỂU IOE ---
         let ioeScore = 0;
         let currentIOEItem = null;
-        let ioeMode = 0; // 0: scramble, 1: fill blank
+        let ioeMode = 0;
 
         function generateIOEQuestion() {
             currentIOEItem = vocabulary[Math.floor(Math.random() * vocabulary.length)];
@@ -593,7 +637,6 @@
             area.innerHTML = '';
 
             if (ioeMode === 0) {
-                // Dạng 1: Xếp từ bị xáo trộn
                 document.getElementById('ioe-type-label').innerText = "Dạng bài IOE: Sắp xếp chữ cái thành từ đúng";
                 document.getElementById('ioe-question').innerText = `Nghĩa: "${currentIOEItem.vi}"`;
 
@@ -605,9 +648,7 @@
                     const btn = document.createElement('div');
                     btn.className = 'letter-btn';
                     btn.innerText = l;
-                    btn.onclick = () => {
-                        input.value += l;
-                    };
+                    btn.onclick = () => { input.value += l; };
                     container.appendChild(btn);
                 });
 
@@ -620,7 +661,6 @@
                 area.appendChild(input);
 
             } else {
-                // Dạng 2: Điền ký tự còn thiếu
                 document.getElementById('ioe-type-label').innerText = "Dạng bài IOE: Điền từ còn thiếu vào chỗ trống";
                 
                 let word = currentIOEItem.en;
@@ -647,6 +687,43 @@
             }
             document.getElementById('ioe-score').innerText = `Điểm IOE: ${ioeScore}`;
             generateIOEQuestion();
+        }
+
+        // --- GAME QUIZ (TRẮC NGHIỆM) ---
+        let quizScore = 0;
+
+        function initQuiz() {
+            const target = vocabulary[Math.floor(Math.random() * vocabulary.length)];
+            const isEngToVi = Math.random() > 0.5;
+
+            if (isEngToVi) {
+                document.getElementById('quiz-question').innerText = `Từ "${target.en}" nghĩa là gì?`;
+            } else {
+                document.getElementById('quiz-question').innerText = `Từ nào có nghĩa là "${target.vi}"?`;
+            }
+
+            let distractors = vocabulary.filter(v => v.en !== target.en).sort(() => 0.5 - Math.random()).slice(0, 3);
+            let options = [...distractors, target].sort(() => 0.5 - Math.random());
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = isEngToVi ? opt.vi : opt.en;
+                btn.onclick = () => {
+                    if (opt.en === target.en) {
+                        alert('🎉 Chính xác! Bạn giỏi quá!');
+                        quizScore += 10;
+                    } else {
+                        alert(`❌ Tiếc quá, đáp án đúng là: ${isEngToVi ? target.vi : target.en}`);
+                    }
+                    document.getElementById('quiz-score').innerText = `Điểm Quiz: ${quizScore}`;
+                    initQuiz();
+                };
+                optionsContainer.appendChild(btn);
+            });
         }
 
         // --- DICTIONARY ---
